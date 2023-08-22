@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
 
+import {
+  BrowserRouter,
+  Route,
+  Routes
+} from "react-router-dom";
+
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Browse from './components/Browse';
@@ -9,8 +15,9 @@ import AsideMenu from './components/AsideMenu';
 import Footer from './components/Footer';
 import Offline from './components/Offline';
 import Splash from './pages/Splash';
+import Profile from './pages/Profile';
 
-function App() {
+function Home() {
   const [items, setItems] = useState([]);
   const [offlineStatus, setOfflineStatus] = useState(!navigator.onLine);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,11 +37,14 @@ function App() {
       const {nodes} = await response.json();
       setItems(nodes);
 
-      const script = document.createElement("script");
+      if (!document.querySelector('script[src="/carousel.js"]')) {
+        const script = document.createElement("script");
+  
+        script.src = '/carousel.js';
+        script.async = false;
+        document.body.appendChild(script);
+      }
 
-      script.src = '/carouser.js';
-      script.async = false;
-      document.body.appendChild(script);
     })();
 
     handleOfflineStatus()
@@ -73,4 +83,14 @@ function App() {
   );
 }
 
-export default App;
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/profile' element={<Profile />} />
+      </Routes>
+    </BrowserRouter>
+  )
+};
